@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -21,10 +22,12 @@ import java.util.List;
  * @version 3.0
  */
 
+
 public class RequestPermissionActivity extends Activity {
 
   private String[] permissions;
   private int requestCode;
+  private long requestPermissionStarTime;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class RequestPermissionActivity extends Activity {
 
   private void requestPermission(String[] permissions) {
     List<String> unAcceptPermission = new ArrayList<>();
+    requestPermissionStarTime = System.currentTimeMillis();
     for (String permission : permissions) {
       if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
         unAcceptPermission.add(permission);
@@ -69,20 +73,23 @@ public class RequestPermissionActivity extends Activity {
       if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
         requestPermissionSuccess();
       } else {
-        requestPermissionFailed();
+        long refuseSpendTime = System.currentTimeMillis() - requestPermissionStarTime;
         boolean alwaysHidePermission = false;
         for (int i = 0; i < grantResults.length; i++) {
           if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
             //判断是否勾选禁止后不再询问
             boolean showRequestPermission = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i]);
-            if (showRequestPermission) {
+            if (!showRequestPermission) {
               alwaysHidePermission = true;
             }
           }
         }
-        if(alwaysHidePermission) {
-          Toast.makeText(this, "您已勾选不在提示权限请求，请前往管理页面开启权限后再试！", Toast.LENGTH_LONG).show();
+        Log.d("refuseSpendTime：", refuseSpendTime + ", " + alwaysHidePermission
+        );
+        if (alwaysHidePermission || refuseSpendTime < 500) {//由于勾选不在提示权限请求后，会马上被拒绝，所以可以根据被拒绝的时间来判断勾选
+          Toast.makeText(this, "您可能已勾选不在提示权限请求，请前往管理页面开启权限后再试！", Toast.LENGTH_LONG).show();
         }
+        requestPermissionFailed();
       }
     }
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
