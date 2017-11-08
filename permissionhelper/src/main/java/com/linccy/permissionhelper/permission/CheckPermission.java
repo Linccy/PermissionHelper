@@ -1,4 +1,4 @@
-package com.linccy.permissionhelper.annotations.permission;
+package com.linccy.permissionhelper.permission;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-package com.linccy.permissionhelper.annotations.permission;
+package com.linccy.permissionhelper.permission;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,9 +28,9 @@ public class AspectJPermission {
 
   /**
    * 找到处理的切点
-   * * *(..)  可以处理CheckLogin这个类所有的方法
+   * * *(..)  可以处理CheckPermission这个类所有的方法
    */
-  @Pointcut("execution(@m.aicoin.tools.annotations.permission.CheckPermission  * *(..))")
+  @Pointcut("execution(@com.linccy.permissionhelper.permission.CheckPermission  * *(..))")
   public void executionAspectJ() {
 
   }

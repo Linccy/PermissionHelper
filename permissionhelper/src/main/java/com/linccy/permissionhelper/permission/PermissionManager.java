@@ -1,4 +1,4 @@
-package com.linccy.permissionhelper.annotations.permission;
+package com.linccy.permissionhelper.permission;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
