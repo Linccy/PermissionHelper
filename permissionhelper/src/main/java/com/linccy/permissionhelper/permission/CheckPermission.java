@@ -12,5 +12,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD) //可以注解在方法 上
 @Retention(RetentionPolicy.RUNTIME) //运行时（执行时）存在
 public @interface CheckPermission {
-  String value();
+  String[] value();
+  int requestCode() default 1;
 }

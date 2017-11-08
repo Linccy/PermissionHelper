@@ -3,7 +3,6 @@ package com.linccy.permissionhelper.permission;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.linccy.permissionhelper.RequestPermissionActivity;
 
@@ -13,7 +12,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
-import java.lang.ref.WeakReference;
 
 /**
  * 处理切片
@@ -24,13 +22,14 @@ import java.lang.ref.WeakReference;
 @Aspect
 public class AspectJPermission {
   private static final String TAG = "tag";
-  private static WeakReference<ProceedingJoinPoint> mCurrentJoinPoint;
+  private ProceedingJoinPoint mCurrentJoinPoint;
+  private int requestCode;
 
   /**
    * 找到处理的切点
-   * * *(..)  可以处理CheckPermission这个类所有的方法
+   * * *(..)  可以处理CheckLogin这个类所有的方法
    */
-  @Pointcut("execution(@com.linccy.permissionhelper.permission.CheckPermission  * *(..))")
+  @Pointcut("execution(@m.aicoin.tools.annotations.permission.CheckPermission  * *(..))")
   public void executionAspectJ() {
 
   }
@@ -46,7 +45,8 @@ public class AspectJPermission {
     MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
     Log.i(TAG, "aroundAspectJ(ProceedingJoinPoint joinPoint)");
     CheckPermission aspectJAnnotation = methodSignature.getMethod().getAnnotation(CheckPermission.class);
-    String permission = aspectJAnnotation.value();
+    String[] permissions = aspectJAnnotation.value();
+    requestCode = aspectJAnnotation.requestCode();
     Context context;
     if (PermissionSupport.class.isAssignableFrom(joinPoint.getThis().getClass())) {
       PermissionSupport support = (PermissionSupport) joinPoint.getThis();
@@ -56,18 +56,17 @@ public class AspectJPermission {
     }
 
     Object o = null;
-    String result = "";
-    if (PermissionManager.getInnerInstance().checkPermission(context, permission)) {
+
+    if (PermissionManager.getInnerInstance().checkPermissions(context, permissions)) {
       o = joinPoint.proceed();
     } else {
-      mCurrentJoinPoint = new WeakReference<>(joinPoint);
+      mCurrentJoinPoint = joinPoint;
       Intent intent = new Intent();
       intent.setClass(context, RequestPermissionActivity.class);
-      intent.putExtra("permissions", new String[]{permission});
-      intent.putExtra("requestcode", 11);
+      intent.putExtra("permissions", permissions);
+      intent.putExtra("requestcode", requestCode);
       context.startActivity(intent);
     }
-    Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
     return o;
   }
 }  

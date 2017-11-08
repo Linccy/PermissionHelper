@@ -44,9 +44,15 @@ public class PermissionManager {
     if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED) {
       return true;
     }
-//        if (permission.equals("android.permission.CAMERA")){  
-//            return true;  
-//        }  
     return false;
+  }
+
+  public boolean checkPermissions(Context context, String[] permissions) {
+    for(String permission : permissions) {
+      if (!checkPermission(context, permission)) {
+        return false;
+      }
+    }
+    return true;
   }
 }
