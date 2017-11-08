@@ -1,3 +1,3 @@
 <resources>
-  <string name="app_name">permissions</string>
+  <string name="permission_helper">permission_helper</string>
 </resources>

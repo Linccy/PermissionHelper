@@ -1,2 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.linccy.permissionhelper"/>
+          package="com.linccy.permissionhelper">
+
+  <application
+    android:allowBackup="true"
+    android:label="@string/permission_helper">
+    <activity
+      android:name=".RequestPermissionActivity"
+      android:screenOrientation="portrait"
+      android:theme="@android:style/Theme.Translucent">
+      <intent-filter>
+        <action android:name="com.linccy.permissionhelper.permission"/>
+
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+    </activity>
+  </application>
+</manifest>
